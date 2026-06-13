@@ -1,8 +1,13 @@
 /* ================= app.js ================= */
-
 const API_URL = "https://mouse-afford-handbrake.ngrok-free.dev"; // เปลี่ยนพอร์ตให้ตรงกับ Backend ของคุณ
 const token = localStorage.getItem("access_token");
-const headers = { "Content-Type": "application/json", "Authorization": `Bearer ${token}` };
+
+// 👇 [ปรับปรุง] เพิ่ม 'ngrok-skip-browser-warning': 'true' เข้าไปที่ตัวแปร headers
+const headers = { 
+  "Content-Type": "application/json", 
+  "Authorization": `Bearer ${token}`,
+  "ngrok-skip-browser-warning": "true" 
+};
 
 let statusChartInstance = null;
 let trendChartInstance = null;
