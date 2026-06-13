@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trip Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="trips.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar__logo">Trip</div>
+            <ul class="navbar__links">
+                <div onclick="window.location.href='dashboard.html'"class="masin">Dashboard</div>
+                <div onclick="window.location.href='trips.html'" class="trip" >Trip</div>
+                <div onclick="window.location.href='vehicles.html'" class="masin">Vehicle</div>
+                <div onclick="window.location.href='maintenace.html'" class="masin">Maintenance</div>
+            </ul>
+    </div><br><br><br>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="sidebar__nav">
+        <a href="vehicles.html" class="nav-item">ยานพาหนะ</a>
+        <a href="trips.html"    class="nav-item nav-item--active">Trips</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <h1 class="topbar__title">Trip Management</h1>
+        <button class="btn btn--primary" onclick="openCreateModal()">+ สร้าง Trip ใหม่</button>
+      </header>
+
+      <section class="section">
+        <div id="trip-list" class="trip-grid">
+          
+          <div class="trip-card">
+            <div class="trip-card__header">
+              <span class="trip-card__route">กรุงเทพ ➔ เชียงใหม่</span>
+              <span class="badge badge--in_progress">IN_PROGRESS</span>
+            </div>
+
+            <div class="trip-progress">
+              <div class="trip-progress__labels">
+                <span>จุดเริ่มต้น</span>
+                <span>ปลายทาง</span>
+              </div>
+              <div class="trip-progress__track">
+                <div class="trip-progress__fill" style="width: 65%;">
+                  <div class="trip-progress__icon">🚚</div>
+                </div>
+              </div>
+              <div class="trip-progress__detail">
+                ระยะทาง 452 / 696 km <span>(65%)</span>
+              </div>
+            </div>
+
+            <div class="trip-card__meta">
+              <span>🚛 กท-123 Isuzu D-Max</span>
+              <span>👤 Draf</span>
+              <span>📦 GENERAL</span>
+              <span>📅 2026-03-30</span>
+            </div>
+            
+            <div class="trip-card__actions">
+              <button class="btn btn--ghost" onclick="openTracker()">📍 Tracker</button>
+              <button class="btn btn--primary">✔ Complete</button>
+            </div>
+          </div>
+
+          <div class="trip-card">
+            <div class="trip-card__header">
+              <span class="trip-card__route">ชลบุรี ➔ ระยอง</span>
+              <span class="badge badge--completed">COMPLETED</span>
+            </div>
+
+            <div class="trip-progress trip-progress--done">
+              <div class="trip-progress__labels">
+                <span>จุดเริ่มต้น</span>
+                <span>ปลายทาง</span>
+              </div>
+              <div class="trip-progress__track">
+                <div class="trip-progress__fill" style="width: 100%;">
+                  <div class="trip-progress__icon">🏁</div>
+                </div>
+              </div>
+              <div class="trip-progress__detail">
+                ระยะทาง 120 / 120 km <span>(100%)</span>
+              </div>
+            </div>
+
+            <div class="trip-card__meta">
+              <span>🚛 รย-999 Hino 500</span>
+              <span>👤 สมชาย</span>
+              <span>📦 CHEMICALS</span>
+              <span>📅 2026-03-29</span>
+            </div>
+            
+            <div class="trip-card__actions">
+              <button class="btn btn--ghost" onclick="openTracker()">📍 Tracker</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modal-create" class="modal-overlay" style="display:none">
+    <div class="modal modal--wide">
+      <button class="modal__close" onclick="closeCreateModal()">✕</button>
+
+      <div class="steps">
+        <div class="step" id="step-ind-1">
+          <div class="step__dot">1</div>
+          <div class="step__label">ยานพาหนะ & คนขับ</div>
+        </div>
+        <div class="step__line"></div>
+        <div class="step" id="step-ind-2">
+          <div class="step__dot">2</div>
+          <div class="step__label">เส้นทาง & สินค้า</div>
+        </div>
+        <div class="step__line"></div>
+        <div class="step" id="step-ind-3">
+          <div class="step__dot">3</div>
+          <div class="step__label">Checkpoints</div>
+        </div>
+      </div>
+
+      <div id="step-1" class="step-content">
+        <h2 class="step-content__title">ขั้นที่ 1 — เลือกยานพาหนะและคนขับ</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>ยานพาหนะ <span class="req">*</span></label>
+            <select id="f-vehicle">
+              <option value="">-- เลือก --</option>
+            </select>
+            <span class="field-error" id="err-vehicle"></span>
+          </div>
+          <div class="form-group">
+            <label>คนขับ <span class="req">*</span></label>
+            <select id="f-driver">
+              <option value="">-- เลือก --</option>
+            </select>
+            <span class="field-error" id="err-driver"></span>
+          </div>
+          <div class="form-group">
+            <label>วันที่เริ่มต้น <span class="req">*</span></label>
+            <input type="datetime-local" id="f-started_at">
+            <span class="field-error" id="err-started_at"></span>
+          </div>
+        </div>
+        <div class="step-actions">
+          <span></span>
+          <button class="btn btn--primary" onclick="goStep(2)">ถัดไป →</button>
+        </div>
+      </div>
+
+      <div id="step-2" class="step-content" style="display:none">
+        <h2 class="step-content__title">ขั้นที่ 2 — เส้นทางและสินค้า</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>ต้นทาง <span class="req">*</span></label>
+            <input type="text" id="f-origin" placeholder="เช่น กรุงเทพฯ">
+            <span class="field-error" id="err-origin"></span>
+          </div>
+          <div class="form-group">
+            <label>ปลายทาง <span class="req">*</span></label>
+            <input type="text" id="f-destination" placeholder="เช่น เชียงใหม่">
+            <span class="field-error" id="err-destination"></span>
+          </div>
+          <div class="form-group">
+            <label>ระยะทาง (km)</label>
+            <input type="number" id="f-distance_km" placeholder="0" min="0">
+          </div>
+          <div class="form-group">
+            <label>ประเภทสินค้า</label>
+            <select id="f-cargo_type">
+              <option value="">-- ไม่ระบุ --</option>
+              <option>GENERAL</option>
+              <option>FRAGILE</option>
+              <option>HAZARDOUS</option>
+              <option>REFRIGERATED</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>น้ำหนักสินค้า (kg)</label>
+            <input type="number" id="f-cargo_weight_kg" placeholder="0" min="0">
+          </div>
+        </div>
+        <div class="step-actions">
+          <button class="btn btn--ghost" onclick="goStep(1)">← ย้อนกลับ</button>
+          <button class="btn btn--primary" onclick="goStep(3)">ถัดไป →</button>
+        </div>
+      </div>
+
+      <div id="step-3" class="step-content" style="display:none">
+        <h2 class="step-content__title">ขั้นที่ 3 — Checkpoints <span class="req">(อย่างน้อย 1 จุด)</span></h2>
+        <div id="checkpoints-container"></div>
+        <button class="btn btn--ghost btn--sm" onclick="addCheckpoint()">+ เพิ่ม Checkpoint</button>
+        <span class="field-error" id="err-checkpoints"></span>
+
+        <div class="step-actions" style="margin-top:24px">
+          <button class="btn btn--ghost" onclick="goStep(2)">← ย้อนกลับ</button>
+          <button class="btn btn--primary" onclick="submitTrip()">✓ สร้าง Trip</button>
+        </div>
+        <p id="submit-error" class="submit-error"></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-tracker" class="modal-overlay" style="display:none">
+    <div class="modal modal--wide">
+      <button class="modal__close" onclick="closeTracker()">✕</button>
+      <div id="tracker-content">
+        <p class="loading-text">กำลังโหลด...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="Login.js"></script>
+  <script src="trips.js"></script>
+</body>
+</html>

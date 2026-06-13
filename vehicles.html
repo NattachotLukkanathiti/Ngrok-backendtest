@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Vehicles</title>
+<link rel="stylesheet" href="vehicles.css">
+</head>
+<body>
+<div class="navbar">
+        <div class="navbar__logo">Vehicle</div>
+            <ul class="navbar__links">
+                <div onclick="window.location.href='dashboard.html'" class="masin">Dashboard</div>
+                <div onclick="window.location.href='trips.html'" class="masin" >Trip</div>
+                <div onclick="window.location.href='vehicles.html'" class="vehicle">Vehicle</div>
+                <div onclick="window.location.href='maintenace.html'" class="masin">Maintenance</div>
+            </ul>
+</div>
+<br><br><br><br><br><div class="con">
+
+<div class="top-bar">
+  <div class="H22">Vehicle Management</div>
+  <div class="top-bar__actions">
+    <button onclick="openModal('modal-add-vehicle')">+ เพิ่ม Vehicle</button>
+    <button onclick="openModal('modal-add-driver')">+ เพิ่ม Driver</button>
+  </div>
+</div>
+
+<div class="filters">
+  <input type="text" id="f-search" placeholder="ค้นหา plate, brand, model...">
+  <select id="f-status">
+    <option value="">ทุก Status</option>
+    <option value="IDLE">IDLE</option>
+    <option value="ACTIVE">ACTIVE</option>
+    <option value="MAINTENANCE">MAINTENANCE</option>
+  </select>
+  <select id="f-type">
+    <option value="">ทุก Type</option>
+    <option value="TRUCK">TRUCK</option>
+    <option value="VAN">VAN</option>
+    <option value="PICKUP">PICKUP</option>
+    <option value="MOTORCYCLE">MOTORCYCLE</option> </select>
+  <input type="text" id="f-driver" placeholder="ชื่อ Driver...">
+</div>
+
+<div id="vehicle-list"></div>
+
+<div class="modal-overlay" id="modal-add-vehicle">
+  <div class="modal">
+    <h3>เพิ่ม / แก้ไข Vehicle</h3>
+    
+    <input type="hidden" id="v-id" value="">
+    
+    <input type="text"   id="v-plate"       placeholder="Plate Number (ทะเบียนรถ) *">
+    <select id="v-type">
+      <option value="">เลือก Type *</option>
+      <option value="TRUCK">TRUCK</option>
+      <option value="VAN">VAN</option>
+      <option value="MOTORCYCLE">MOTORCYCLE</option> <option value="PICKUP">PICKUP</option>
+    </select>
+    
+    <select id="v-driver-id">
+  <option value="">เลือกคนขับ (ไม่มีคนขับ)</option>
+  </select>
+    
+    <input type="text"   id="v-brand"       placeholder="Brand (ยี่ห้อ) *">
+    <input type="text"   id="v-model"       placeholder="Model (รุ่น) *">
+    
+    <input type="number" id="v-year"        placeholder="Year (ปีผลิต) *">
+    <select id="v-fuel">
+      <option value="">เลือก Fuel Type (เชื้อเพลิง) *</option>
+      <option value="DIESEL">DIESEL</option>
+      <option value="GASOLINE">GASOLINE</option>
+      <option value="ELECTRIC">ELECTRIC</option>
+      <option value="HYBRID">HYBRID</option>
+    </select>
+
+    <input type="number" id="v-mileage"     placeholder="Mileage KM (เลขไมล์ปัจจุบัน) *">
+    
+    <input type="number" id="v-lastservice" placeholder="Last Service KM (เข้าศูนย์ล่าสุด) *">
+    
+    <input type="number" id="v-nextservice" placeholder="Next Service KM (เข้าศูนย์รอบถัดไป) *">
+    
+    <div id="v-error" class="modal-error"></div>
+    <div class="modal-actions">
+      <button onclick="closeModal('modal-add-vehicle')">ยกเลิก</button>
+      <button class="btn-primary" onclick="submitAddVehicle()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-add-driver">
+  <div class="modal">
+    <h3>เพิ่ม Driver</h3>
+    <input type="text" id="d-name"    placeholder="ชื่อ *">
+    <input type="text" id="d-license" placeholder="License Number *">
+    <input type="date" id="d-expiry">
+    <input type="text" id="d-phone"   placeholder="เบอร์โทร *">
+    <div id="d-error" class="modal-error"></div>
+    <div class="modal-actions">
+      <button onclick="closeModal('modal-add-driver')">ยกเลิก</button>
+      <button class="btn-primary" onclick="submitAddDriver()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-history">
+  <div class="modal modal--wide">
+    <h3>Vehicle History</h3>
+    <div id="history-list"></div>
+    <div class="modal-actions">
+      <button onclick="closeModal('modal-history')">ปิด</button>
+    </div>
+  </div>
+</div>
+
+</div>
+<script src="Login.js"></script>
+<script src="vehicles.js"></script>
+</body>
+</html>

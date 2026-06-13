@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fleet Management Dashboard</title>
+  
+  <link rel="stylesheet" href="dashboard.css">
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="navbar">
+        <div class="navbar__logo">หน้าจอภาพรวม</div>
+            <ul class="navbar__links">
+                <div onclick="window.location.href='dashboard.html'" class="dashh">Dashboard</div>
+                <div onclick="window.location.href='trips.html'" class="masin" >Trip</div>
+                <div onclick="window.location.href='vehicles.html'" class="masin">Vehicle</div>
+                <div onclick="window.location.href='maintenace.html'" class="masin">Maintenance</div>
+            </ul>
+    </div>
+  <aside class="sidebar">
+    <br><br>
+    <div class="nav-links">
+      <a href="#" id="nav-dashboard" class="active" onclick="switchTab('dashboard')">Dashboard</a>
+      <a href="#" id="nav-audit" onclick="switchTab('audit')">Audit Logs</a>
+    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </aside>
+
+  <main class="main-content">
+    <br><br><br>
+    <div id="tab-dashboard" class="tab-content active">
+      <div class="dash">Dashboard All</div>
+      <br><br>
+
+      <div class="card-container">
+        <div class="card">
+          <h3>Total Vehicles</h3>
+          <h2 id="card-vehicles">0</h2>
+        </div>
+        <div class="card">
+          <h3>Active Trips Today</h3>
+          <h2 id="card-trips">0</h2>
+        </div>
+        <div class="card">
+          <h3>Total Distance Today</h3>
+          <h2><span id="card-distance">0</span> km</h2>
+        </div>
+        <div class="card">
+          <h3>Maintenance Overdue</h3>
+          <h2 id="card-maintenance" class="text-danger">0</h2>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-box" style="flex: 1;">
+          <canvas id="statusChart"></canvas>
+        </div>
+        <div class="chart-box" style="flex: 2;">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-audit" class="tab-content">
+      <header>
+        <div class="mainaudit">System Audit Logs</div>
+      </header>
+
+      <div class="filter-container">
+        <input type="text" id="filter-username" placeholder="Username (Admin Only)">
+        
+        <select id="filter-action">
+          <option value="">-- All Actions --</option>
+          <option value="LOGIN">LOGIN</option>
+          <option value="CREATE_VEHICLE">CREATE_VEHICLE</option>
+          <option value="UPDATE_VEHICLE_STATUS">UPDATE_VEHICLE_STATUS</option>
+          <option value="ASSIGN_DRIVER_CREATE_TRIP">ASSIGN_DRIVER_CREATE_TRIP</option>
+        </select>
+
+        <select id="filter-resource">
+          <option value="">-- All Resources --</option>
+          <option value="auth">Auth</option>
+          <option value="vehicle">Vehicle</option>
+          <option value="trip">Trip</option>
+          <option value="checkpoint">Checkpoint</option>
+        </select>
+
+        <input type="date" id="filter-start" title="Start Date">
+        <input type="date" id="filter-end" title="End Date">
+        
+        <button class="search-btn" onclick="loadAuditLogs()">🔍 Search</button>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Username</th>
+              <th>Action</th>
+              <th>Resource Type</th>
+              <th>Resource ID</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="logs-table-body">
+            <tr><td colspan="6" style="text-align: center;">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

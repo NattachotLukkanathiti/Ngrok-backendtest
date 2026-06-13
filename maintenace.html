@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Maintenance & Alerts</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="maintenance.css" />
+</head>
+
+<body>
+    <div class="app">
+        <div class="navbar">
+            <div class="navbar__logo">Maintenance & Alert Engin</div>
+            <ul class="navbar__links">
+                <span class="topbar-sub" id="last-refresh">—</span>
+                <div class="topbar-dot" id="conn-dot"></div>
+                <button class="filter-btn" style="margin-left:auto;padding:5px 14px" onclick="refreshAll()">↺
+                    refresh</button>
+                <div onclick="window.location.href='dashboard.html'" class="masin">Dashboard</div>
+                <div onclick="window.location.href='trips.html'" class="masin">Trip</div>
+                <div onclick="window.location.href='vehicles.html'" class="masin">Vehicle</div>
+                <div onclick="window.location.href='maintenace.html'" class="mai">Maintenance</div>
+
+            </ul>
+        </div><br><br><br>
+
+
+        <!-- LEFT: Maintenance Schedule -->
+        <div class="panel-left">
+
+            <div class="stat-row">
+                <div class="stat-box stat-red">
+                    <div class="stat-num" id="s-overdue">—</div>
+                    <div class="stat-lbl">overdue</div>
+                </div>
+                <div class="stat-box stat-yellow">
+                    <div class="stat-num" id="s-soon">—</div>
+                    <div class="stat-lbl">due in 7d</div>
+                </div>
+                <div class="stat-box stat-blue">
+                    <div class="stat-num" id="s-total">—</div>
+                    <div class="stat-lbl">scheduled</div>
+                </div>
+            </div>
+
+            <div class="section-head">
+                <span class="section-title">Maintenance Schedule</span>
+            </div>
+
+            <div class="filter-bar">
+                <button class="filter-btn active" data-f="ALL" onclick="setFilter(this,'ALL')">all</button>
+                <button class="filter-btn" data-f="OVERDUE" onclick="setFilter(this,'OVERDUE')">overdue</button>
+                <button class="filter-btn" data-f="DUE_SOON" onclick="setFilter(this,'DUE_SOON')">due soon</button>
+                <button class="filter-btn" data-f="NORMAL" onclick="setFilter(this,'NORMAL')">upcoming</button>
+                <button class="filter-btn" data-f="COMPLETED" onclick="setFilter(this,'COMPLETED')">completed</button>
+            </div>
+
+            <div id="maint-list">
+                <div class="loader">
+                    <div class="spin"></div>loading...
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Alert Panel -->
+        <div class="panel-right">
+
+            <div class="section-head">
+                <span class="section-title">Alerts</span>
+                <span class="badge badge-red" id="alert-count">—</span>
+            </div>
+
+            <div class="alert-filter-bar">
+                <button class="af-btn active" data-s="ALL" onclick="setAlertFilter(this,'ALL')">all</button>
+                <button class="af-btn af-critical" data-s="CRITICAL"
+                    onclick="setAlertFilter(this,'CRITICAL')">CRITICAL</button>
+                <button class="af-btn af-warning" data-s="WARNING"
+                    onclick="setAlertFilter(this,'WARNING')">WARNING</button>
+                <button class="af-btn af-info" data-s="INFO" onclick="setAlertFilter(this,'INFO')">INFO</button>
+                <button class="af-btn af-success" data-s="SUCCESS"
+                    onclick="setAlertFilter(this,'SUCCESS')">SUCCESS</button>
+            </div>
+
+            <div id="alert-list">
+                <div class="loader">
+                    <div class="spin"></div>loading...
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    <script src="maintenance.js"></script>
+</body>
+
+</html>

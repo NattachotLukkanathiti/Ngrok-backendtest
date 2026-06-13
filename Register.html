@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="Login.css">
+</head>
+<body>
+
+  <div class="navbar">
+        <div class="navbar__logo">ลงชื่อเข้าใช้งาน</div>
+    </div>
+  <div class="hero">
+    <div class="mainLogin">Register</div>
+    <div class="input-group">
+      <input type="text" id="username" placeholder="Username">
+      <input type="password" id="password" placeholder="Password">
+      <div class="a"> 
+            <input type="radio" name="role" value="ADMIN"> ADMIN 
+            <input type="radio" name="role" value="DISPATCHER"> DISPATCHER </div>
+    </div>
+    <div id="message" style="color:red; margin-top:10px;"></div>
+    <button class="button" onclick="Registerbutton()">Register</button>
+    <div class="footer">
+      <p>Have an account? <a class= "buttonregister"href="Login.html">Login</a></p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="register.js"></script>
+</body>
+</html>
