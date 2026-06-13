@@ -58,6 +58,7 @@ function applyFilters() {
 // ================= RENDER =================
 // ================= RENDER =================
 // ================= RENDER =================
+// ================= RENDER =================
 function renderVehicles(list) {
   var el = document.getElementById("vehicle-list");
   if (!list.length) {
@@ -67,30 +68,32 @@ function renderVehicles(list) {
 
   // 1. ดึง Role ออกมาเช็ค
   var userRole = localStorage.getItem("user_role"); 
-  
-  // 👉 แอบปริ้นท์ค่าออกมาดูใน Console (กด F12 ดูได้เลย)
   console.log("🔥 Role ที่หน้า Vehicles ดึงได้คือ:", userRole); 
 
   el.innerHTML = list.map(function(v) {
-    // 2. ทำให้ยืดหยุ่นขึ้น! ไม่ว่าจะเป็น 'admin', 'Admin', หรือ 'ADMIN' ก็รอด
     var isAdmin = userRole && userRole.toUpperCase() === "ADMIN";
 
     var deleteBtn = isAdmin 
       ? "<button class='btn-danger' onclick=\"deleteVehicle('" + v.id + "', '" + (v.license_plate || "") + "')\">ลบ</button>" 
       : "";
 
+    // 🌟 พระเอกของเราอยู่ตรงนี้! ดักไว้ก่อนเลยว่าถ้า status ไม่มีค่า ให้เป็น IDLE
+    var currentStatus = v.status || "IDLE";
+
     return "<div class='vehicle-card' data-id='" + v.id + "'>" +
       "<div class='vehicle-card__header'>" +
         "<strong>" + (v.license_plate || "-") + "</strong>" +
-        "<span class='badge badge--" + v.status.toLowerCase() + "'>" + v.status + "</span>" +
+        // 🌟 เปลี่ยนมาใช้ currentStatus แทน v.status
+        "<span class='badge badge--" + currentStatus.toLowerCase() + "'>" + currentStatus + "</span>" +
       "</div>" +
-      "<span>" + v.type + " — " + (v.brand || "") + " " + (v.model || "") + "</span>" +
+      "<span>" + (v.type || "-") + " — " + (v.brand || "") + " " + (v.model || "") + "</span>" +
       "<span>👤 " + (v.driver_name || "-") + "</span>" +
-      "<span>" + Number(v.mileage_km).toLocaleString() + " km</span>" +
+      "<span>" + Number(v.mileage_km || 0).toLocaleString() + " km</span>" +
       "<div class='vehicle-card__actions'>" +
-        "<button onclick=\"changeStatus('" + v.id + "', '" + v.status + "')\">เปลี่ยน Status</button>" +
+        // 🌟 ตรงนี้ก็เปลี่ยนมาใช้ currentStatus ด้วย
+        "<button onclick=\"changeStatus('" + v.id + "', '" + currentStatus + "')\">เปลี่ยน Status</button>" +
         "<button onclick=\"viewHistory('" + v.id + "')\">ดู History</button>" +
-        deleteBtn + // 3. เอาตัวแปรปุ่มลบมาใส่ตรงนี้
+        deleteBtn + 
       "</div>" +
     "</div>";
   }).join("");
