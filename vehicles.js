@@ -1,5 +1,5 @@
 
-const API = "https://mouse-afford-handbrake.ngrok-free.dev"; 
+const BASE_URL = "https://mouse-afford-handbrake.ngrok-free.dev"; 
 let allVehicles = [];
 
 // ================= LOAD =================
