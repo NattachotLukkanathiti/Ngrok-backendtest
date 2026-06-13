@@ -99,28 +99,25 @@ async function refreshAccessToken() {
 }
 
 // ================= FETCH WITH AUTH =================
-async function fetchWithAuth(url, options = {}) {
-  if (!options.headers) options.headers = {};
-  const token = TokenStore.get() || localStorage.getItem("access_token");
-  options.headers["Authorization"] = "Bearer " + token;
-
-  let res = await fetch(url, options);
-
-  if (res.status === 401) {
-    // โคลน res ไว้เพื่ออ่านเช็ค error code โดยไม่เสีย stream หลัก
-    const cloneRes = res.clone();
-    const body = await cloneRes.json().catch(() => ({}));
-
-    if (body.error === "TOKEN_EXPIRED") {
-      const newToken = await refreshAccessToken();
-      if (newToken) {
-        options.headers["Authorization"] = "Bearer " + newToken;
-        return await fetch(url, options); // ยิงใหม่แล้ว return ผลลัพธ์เลย
-      }
+// 📄 แก้ไขใน Login.js (บรรทัดแถวๆ 100+)
+function fetchWithAuth(url, options = {}) {
+    const token = localStorage.getItem("access_token");
+    
+    // สร้างวัตถุ Headers ขึ้นมาใหม่เพื่อรวมทุกอย่างเข้าด้วยกันอย่างปลอดภัย
+    const headers = new Headers(options.headers || {});
+    
+    // 🌟 บังคับใส่ตั๋วผ่านทาง ngrok ทุกครั้ง ไม่ว่าจะยิงจากหน้าไหน
+    headers.set("ngrok-skip-browser-warning", "true");
+    
+    // ถ้ามี Token ให้แนบเข้าไปด้วย
+    if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
     }
-  }
-  return res;
+    
+    // เอา Headers ที่รวมกันเสร็จแล้วใส่กลับเข้าไปใน options
+    options.headers = headers;
+    
+    return fetch(url, options);
 }
-
 console.log("Access Token:", TokenStore.get());
 console.log("LocalStorage:", localStorage.getItem("access_token"));
