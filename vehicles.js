@@ -1,5 +1,5 @@
 
-const API = window.location.origin;
+const API = "https://mouse-afford-handbrake.ngrok-free.dev"; 
 let allVehicles = [];
 
 // ================= LOAD =================
