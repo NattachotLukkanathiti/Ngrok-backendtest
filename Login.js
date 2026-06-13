@@ -1,4 +1,4 @@
-const BASE_URL =  "https://mouse-afford-handbrake.ngrok-free.dev"; // เปลี่ยนพอร์ตให้ตรงกับ Backend ของคุณ; 
+const BASE_URL =  window.location.origin; // เปลี่ยนพอร์ตให้ตรงกับ Backend ของคุณ; 
 const TokenStore = (() => {
   let _token = null;
   return {
