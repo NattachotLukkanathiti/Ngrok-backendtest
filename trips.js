@@ -1,5 +1,4 @@
 
-// ─── form state ที่ persist ข้าม step ───
 const formState = {
   vehicle_id: "", driver_id: "", started_at: "",
   origin: "", destination: "", distance_km: "",
@@ -17,7 +16,7 @@ let currentTripId = null;
 // LOAD TRIPS
 // ============================================================
 async function loadTrips() {
-  const res = await fetchWithAuth(`${API}/trips`);
+  const res = await fetchWithAuth(`${BASE_URL}/trips`);
   if (!res) return;
   let trips = await res.json();
   if (!Array.isArray(trips)) trips = [];
@@ -25,7 +24,7 @@ async function loadTrips() {
   trips = await Promise.all(trips.map(async (t) => {
     if (t.status === "IN_PROGRESS") {
       try {
-        const detailRes = await fetchWithAuth(`${API}/trips/${t.id}`);
+        const detailRes = await fetchWithAuth(`${BASE_URL}/trips/${t.id}`);
         if (detailRes && detailRes.ok) {
           const detail = await detailRes.json();
           t.checkpoints = detail.checkpoints || [];
@@ -116,7 +115,7 @@ function renderTrips(list) {
 // ============================================================
 async function completeTrip(tripId) {
   if (!confirm("Complete trip นี้? mileage จะถูกอัปเดตอัตโนมัติ")) return;
-  const res = await fetchWithAuth(`${API}/trips/${tripId}/complete`, { method: "PATCH" });
+  const res = await fetchWithAuth(`${BASE_URL}/trips/${tripId}/complete`, { method: "PATCH" });
   if (!res) return;
   const data = await res.json();
   if (!res.ok) { alert(data.error?.message || "เกิดข้อผิดพลาด"); return; }
@@ -131,8 +130,8 @@ async function completeTrip(tripId) {
 // ============================================================
 async function openCreateModal() {
   const [vRes, dRes] = await Promise.all([
-    fetchWithAuth(`${API}/vehicles`),
-    fetchWithAuth(`${API}/drivers`)
+    fetchWithAuth(`${BASE_URL}/vehicles`),
+    fetchWithAuth(`${BASE_URL}/drivers`)
   ]);
   if (!vRes || !dRes) return;
   const vehicles = await vRes.json();
