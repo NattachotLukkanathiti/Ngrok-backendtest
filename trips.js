@@ -15,14 +15,23 @@ let currentTripId = null;
 // ============================================================
 // LOAD TRIPS
 // ============================================================
+// ============================================================
+// LOAD TRIPS
+// ============================================================
 async function loadTrips() {
   const res = await fetchWithAuth(`${BASE_URL}/trips`);
   if (!res) return;
-  let trips = await res.json();
-  if (!Array.isArray(trips)) trips = [];
+  const rawData = await res.json();
+  
+  // ✅ 1. ดักจับเผื่อข้อมูลถูกห่ออยู่ใน .data
+  let trips = Array.isArray(rawData) ? rawData : (rawData.data || []);
+
+  // ✅ 2. กรองข้อมูลขยะทิ้ง (เอาเฉพาะตัวที่เป็น Object จริงๆ)
+  trips = trips.filter(t => t && typeof t === 'object');
 
   trips = await Promise.all(trips.map(async (t) => {
-    if (t.status === "IN_PROGRESS") {
+    // ✅ 3. เช็คให้ชัวร์ว่ามี t.id ก่อน ถึงจะยิงไปดึง Detail (ป้องกัน /trips/undefined)
+    if (t.status === "IN_PROGRESS" && t.id) {
       try {
         const detailRes = await fetchWithAuth(`${BASE_URL}/trips/${t.id}`);
         if (detailRes && detailRes.ok) {
@@ -42,38 +51,44 @@ async function loadTrips() {
 // ============================================================
 function renderTrips(list) {
   const el = document.getElementById("trip-list");
-  if (!list.length) { el.innerHTML = '<p class="loading-text">ไม่มี Trip</p>'; return; }
+  if (!list || !list.length) { el.innerHTML = '<p class="loading-text">ไม่มี Trip</p>'; return; }
 
   el.innerHTML = list.map(t => {
-    const statusClass = t.status.toLowerCase().replace("_", "-");
-    const canComplete = t.status === "IN_PROGRESS";
+    // ✅ 1. ดักจับ status เผื่อ API ส่งมาแหว่ง (ป้องกัน toLowerCase พัง)
+    const status = t.status || "UNKNOWN";
+    const statusClass = status.toLowerCase().replace("_", "-");
+    const canComplete = status === "IN_PROGRESS";
+    
+    // ✅ 2. ดักจับ id เผื่อไม่มี
+    const tripId = t.id || "";
 
     let percent = 0;
     let progressText = "";
 
-    if (t.status === "COMPLETED") {
+    if (status === "COMPLETED") {
       percent = 100;
       progressText = `เสร็จสิ้นภารกิจ (${t.distance_km || 0} km)`;
-    } else if (t.status === "IN_PROGRESS" && t.checkpoints) {
+    } else if (status === "IN_PROGRESS" && Array.isArray(t.checkpoints)) {
       let passedSteps = 0;
       const totalSteps = t.checkpoints.length * 2;
       t.checkpoints.forEach(c => {
-        if (c.status === "ARRIVED")                               passedSteps += 1;
-        else if (c.status === "DEPARTED" || c.status === "SKIPPED") passedSteps += 2;
+        const cStatus = c.status || "";
+        if (cStatus === "ARRIVED")                               passedSteps += 1;
+        else if (cStatus === "DEPARTED" || cStatus === "SKIPPED") passedSteps += 2;
       });
       percent = totalSteps > 0 ? Math.round((passedSteps / totalSteps) * 100) : 0;
       const completedCps = Math.floor(passedSteps / 2);
       progressText = `ผ่านแล้ว ${completedCps} / ${t.checkpoints.length} จุด`;
     } else {
       percent = 0;
-      progressText = t.status === "IN_PROGRESS" ? "กำลังเริ่ม..." : "รอเริ่มเดินทาง";
+      progressText = status === "IN_PROGRESS" ? "กำลังเริ่ม..." : "รอเริ่มเดินทาง";
     }
 
     percent = Math.min(100, percent);
-    const isDone = percent === 100 || t.status === "COMPLETED";
+    const isDone = percent === 100 || status === "COMPLETED";
 
     let progressHTML = "";
-    if (t.status === "IN_PROGRESS" || t.status === "COMPLETED") {
+    if (status === "IN_PROGRESS" || status === "COMPLETED") {
       progressHTML = `
         <div class="trip-progress ${isDone ? "trip-progress--done" : ""}">
           <div class="trip-progress__labels"><span>จุดเริ่มต้น</span><span>ปลายทาง</span></div>
@@ -90,8 +105,8 @@ function renderTrips(list) {
     <div class="trip-card">
       <div class="trip-card__header">
         <div>
-          <div class="trip-card__route">${t.origin} → ${t.destination}</div>
-          <div style="margin-top:4px"><span class="badge badge--${statusClass}">${t.status}</span></div>
+          <div class="trip-card__route">${t.origin || "ไม่ระบุต้นทาง"} → ${t.destination || "ไม่ระบุปลายทาง"}</div>
+          <div style="margin-top:4px"><span class="badge badge--${statusClass}">${status}</span></div>
         </div>
       </div>
       ${progressHTML}
@@ -100,11 +115,11 @@ function renderTrips(list) {
         <span>👤 ${t.driver_name || "-"}</span>
         ${t.distance_km ? `<span>📏 ${Number(t.distance_km).toLocaleString()} km</span>` : ""}
         ${t.cargo_type  ? `<span>📦 ${t.cargo_type}</span>` : ""}
-        <span>🗓 ${t.started_at ? t.started_at.substring(0, 10) : "-"}</span>
+        <span>🗓 ${t.started_at ? String(t.started_at).substring(0, 10) : "-"}</span>
       </div>
       <div class="trip-card__actions">
-        <button class="btn btn--ghost btn--sm" onclick="openTracker('${t.id}')">📍 Tracker</button>
-        ${canComplete ? `<button class="btn btn--complete btn--sm" onclick="completeTrip('${t.id}')">✓ Complete</button>` : ""}
+        <button class="btn btn--ghost btn--sm" onclick="openTracker('${tripId}')" ${!tripId ? 'disabled' : ''}>📍 Tracker</button>
+        ${canComplete ? `<button class="btn btn--complete btn--sm" onclick="completeTrip('${tripId}')" ${!tripId ? 'disabled' : ''}>✓ Complete</button>` : ""}
       </div>
     </div>`;
   }).join("");
