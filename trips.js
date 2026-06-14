@@ -364,7 +364,7 @@ async function renderTracker(tripId) {
   const el = document.getElementById("tracker-content");
   el.innerHTML = '<p class="loading-text">กำลังโหลด...</p>';
 
-  const res = await fetchWithAuth(`${API}/trips/${tripId}`);
+  const res = await fetchWithAuth(`${BASE_URL}/trips/${tripId}`);
   if (!res) return;
   const trip = await res.json();
   if (trip.error) { el.innerHTML = `<p class="loading-text">${trip.error.message}</p>`; return; }
@@ -473,7 +473,7 @@ async function updateCheckpoint(cpId, newStatus, btnEl) {
   actionsEl.innerHTML = `<span style="color:var(--muted);font-size:12px">กำลังอัปเดต...</span>`;
   errorEl.innerHTML = "";
 
-  const res = await fetchWithAuth(`${API}/checkpoints/${cpId}/status`, {
+  const res = await fetchWithAuth(`${BASE_URL}/checkpoints/${cpId}/status`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ status: newStatus })
