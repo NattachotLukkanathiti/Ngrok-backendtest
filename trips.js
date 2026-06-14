@@ -322,7 +322,7 @@ async function submitTrip() {
     checkpoints:     cps,
   };
 
-  const res = await fetchWithAuth(`${API}/trips`, {
+  const res = await fetchWithAuth(`${BASE_URL}/trips`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
