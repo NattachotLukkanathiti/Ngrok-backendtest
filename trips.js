@@ -143,26 +143,56 @@ async function completeTrip(tripId) {
 // ============================================================
 // MODAL CREATE
 // ============================================================
+// ============================================================
+// MODAL CREATE
+// ============================================================
 async function openCreateModal() {
   const [vRes, dRes] = await Promise.all([
     fetchWithAuth(`${BASE_URL}/vehicles`),
     fetchWithAuth(`${BASE_URL}/drivers`)
   ]);
   if (!vRes || !dRes) return;
-  const vehicles = await vRes.json();
-  const drivers  = await dRes.json();
+  
+  const vehiclesData = await vRes.json();
+  const driversData  = await dRes.json();
+
+  const vList = Array.isArray(vehiclesData) ? vehiclesData : (vehiclesData.data || []);
+  const dList = Array.isArray(driversData) ? driversData : (driversData.data || []);
+
+  // พิมพ์ข้อมูลออกมาดูใน Console (กด F12) เพื่อเช็คว่า Backend ส่งอะไรมาจริงๆ
+  console.log("🚚 ข้อมูลรถจาก Backend:", vList);
+  console.log("👤 ข้อมูลคนขับจาก Backend:", dList);
 
   const vSel = document.getElementById("f-vehicle");
   const dSel = document.getElementById("f-driver");
+  
+  // 1. จัดการ Dropdown ยานพาหนะ
   vSel.innerHTML = '<option value="">-- เลือกยานพาหนะ --</option>' +
-    (Array.isArray(vehicles) ? vehicles : [])
-      .filter(v => v.status === "IDLE" || v.status === "ACTIVE")
-      .map(v => `<option value="${v.id}">${v.license_plate} — ${v.brand} ${v.model} (${v.status})</option>`)
-      .join("");
+    vList.filter(v => {
+      // ดักจับสถานะให้เป็นตัวพิมพ์ใหญ่ก่อนเช็ค เผื่อ Backend ส่งมาเป็นพิมพ์เล็ก
+      const st = (v.status || "").toUpperCase();
+      // ยอมให้แสดงถ้ารถว่าง (IDLE/AVAILABLE/ACTIVE) หรือไม่มีสถานะแนบมา
+      return st === "IDLE" || st === "ACTIVE" || st === "AVAILABLE" || !v.status;
+    })
+    .map(v => {
+      // ดักจับชื่อ Key เผื่อ Backend ใช้ชื่ออื่น
+      const plate = v.license_plate || v.plate_number || v.plate || "ไม่ระบุทะเบียน";
+      const brand = v.brand || "";
+      const model = v.model || "";
+      const status = v.status || "UNKNOWN";
+      return `<option value="${v.id}">${plate} ${brand} ${model} (${status})</option>`;
+    })
+    .join("");
+         
+  // 2. จัดการ Dropdown คนขับ
   dSel.innerHTML = '<option value="">-- เลือกคนขับ --</option>' +
-    (Array.isArray(drivers) ? drivers : [])
-      .map(d => `<option value="${d.id}">${d.name} (${d.license_number})</option>`)
-      .join("");
+    dList.map(d => {
+      // ดักจับชื่อ Key เผื่อ Backend ใช้ชื่ออื่น
+      const name = d.name || d.full_name || d.first_name || "ไม่ทราบชื่อ";
+      const license = d.license_number || d.license || "-";
+      return `<option value="${d.id}">${name} (${license})</option>`;
+    })
+    .join("");
 
   if (formState.vehicle_id)      vSel.value = formState.vehicle_id;
   if (formState.driver_id)       dSel.value = formState.driver_id;
