@@ -17,12 +17,12 @@ function getHeaders() {
 }
 
 async function apiFetch(path) {
-  let res = await fetch(BASE_URL + path, { headers: getHeaders() });
+  let res = await fetch(`${BASE_URL}${path}`, { headers: getHeaders() });
   if (res.status === 401) {
     const j = await res.json().catch(() => ({}));
     if (j.error === "TOKEN_EXPIRED") {
       const ok = await refreshToken();
-      if (ok) res = await fetch(BASE_URL + path, { headers: getHeaders() });
+      if (ok) res = await fetch(`${BASE_URL}${path}`, { headers: getHeaders() });
     }
   }
   if (!res.ok) throw new Error(await res.text());
@@ -32,7 +32,7 @@ async function apiFetch(path) {
 async function refreshToken() {
   const rt = localStorage.getItem(REFRESH_KEY);
   if (!rt) return false;
-  const r = await fetch(BASE_URL + "/refresh", {
+  const r = await fetch(`${BASE_URL}/refresh`, {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ refresh_token: rt }),
   });
