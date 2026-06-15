@@ -1,5 +1,4 @@
-const BASE_URL = "https://mouse-afford-handbrake.ngrok-free.dev"; // เปลี่ยนพอร์ตให้ตรงกับ Backend ของคุณ
-/* ─── CONFIG ─── */
+
 const TOKEN_KEY  = "access_token";
 const REFRESH_KEY = "refresh_token";
 
@@ -14,7 +13,10 @@ let alertRtype    = "ALL";
    AUTH
 ═══════════════════════════════════════════ */
 function getHeaders() {
-  return { "Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem(TOKEN_KEY) };
+  return { "Content-Type": "application/json", 
+    "Authorization": "Bearer " + localStorage.getItem(TOKEN_KEY) ,
+    "ngrok-skip-browser-warning": "true" 
+  };
 }
 
 async function apiFetch(path) {
